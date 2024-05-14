@@ -9,13 +9,10 @@
     
 */ 
 #include <Arduino.h>
-#include <DueTimer.h>
-#include "variant.h"
-#include <due_can.h>
-#define Serial SerialUSB
-				
-	
-class ISA : public CANListener
+#include "../miwagner-ESP32-Arduino-CAN/CAN_config.h"
+#include "../miwagner-ESP32-Arduino-CAN/ESP32CAN.h"
+
+class ISA 
 {
 	
 	
@@ -67,13 +64,11 @@ class ISA : public CANListener
 		long lastAs;
 		long wh;
   		long lastWh;	
-		CANRaw *canPort;
-		uint8_t canEnPin;
-		int canSpeed;
+		void handleFrame(CAN_frame_t *frame); // CAN handler
 		uint8_t page;
 		
 	private:
-      	CAN_FRAME frame;
+		CAN_frame_t frame;
 		unsigned long elapsedtime;
 		double  ampseconds;
 		int milliseconds ;
@@ -83,18 +78,25 @@ class ISA : public CANListener
 		char buffer[9];
 		char bigbuffer[90];
 		uint32_t inbox;
-		CAN_FRAME outframe;
+		CAN_frame_t outframe = {.FIR = {.B =
+                                       {
+                                           .DLC = 8,
+                                           .FF = CAN_frame_std,
+                                       }},
+                           .MsgID = 0x411,
+                           .data = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00}};
+
+
 		
-		void gotFrame(CAN_FRAME *frame, int mailbox); // CAN interrupt service routine	
-		void printCAN(CAN_FRAME *frame);
-		void handle521(CAN_FRAME *frame);
-		void handle522(CAN_FRAME *frame);
-		void handle523(CAN_FRAME *frame);
-		void handle524(CAN_FRAME *frame);
-		void handle525(CAN_FRAME *frame);
-		void handle526(CAN_FRAME *frame);
-		void handle527(CAN_FRAME *frame);
-		void handle528(CAN_FRAME *frame);
+		void printCAN(CAN_frame_t *frame);
+		void handle521(CAN_frame_t *frame);
+		void handle522(CAN_frame_t *frame);
+		void handle523(CAN_frame_t *frame);
+		void handle524(CAN_frame_t *frame);
+		void handle525(CAN_frame_t *frame);
+		void handle526(CAN_frame_t *frame);
+		void handle527(CAN_frame_t *frame);
+		void handle528(CAN_frame_t *frame);
 		
 								
 };
